@@ -104,9 +104,9 @@ class App extends React.Component {
   handleDrop(e, cat){
     let id = e.dataTransfer.getData('id')
     let preCat = e.dataTransfer.getData('preCat')
-    let draggedTask = this.state[preCat].filter(task => task.id == id)[0]
+    let draggedTask = this.state[preCat].filter(task => task.id === id)[0]
     let preCatList = this.state[preCat]
-    preCatList = preCatList.filter(task => task != draggedTask)
+    preCatList = preCatList.filter(task => task !== draggedTask)
     this.setState({ 
       [cat]: [...this.state[cat], draggedTask], 
       [preCat]: preCatList
