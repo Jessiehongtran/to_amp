@@ -104,7 +104,7 @@ class App extends React.Component {
   handleDrop(e, cat){
     let id = e.dataTransfer.getData('id')
     let preCat = e.dataTransfer.getData('preCat')
-    let draggedTask = this.state[preCat].filter(task => task.id === id)[0]
+    let draggedTask = this.state[preCat].filter(task => task.id === parseInt(id))[0]
     let preCatList = this.state[preCat]
     preCatList = preCatList.filter(task => task !== draggedTask)
     this.setState({ 
@@ -131,31 +131,40 @@ class App extends React.Component {
             <div style={{ backgroundColor: "#14213d" , color: '#ffffff', border: '1px solid grey', borderRadius: '6px', padding: '6px'}}>Todo</div>
             <button onClick={() => this.createTask()} style={{ position: 'absolute', left: '-15%', marginTop: '10px'}}>+</button>
             <div style={{ backgroundColor: "#14213d" , color: '#ffffff', border: '1px solid silver', borderRadius: '6px', minHeight:' 100px', padding: '10px', marginTop: '10px'}}>
-              {to_do.map(task => 
+              {to_do.length > 0
+              ? to_do.map(task => 
                   <div draggable onDragStart={e => this.handleDragStart(e, task.id, "to_do")} style={{ backgroundColor: "#ffffff", border: '1px solid grey', padding: '5px 0', borderRadius: '4px', margin: '3px 0'}}>                     
                       <input onChange={(e) => this.handleChange(e)} value={task.task_name.length > 0 ? task.task_name : this.state.task} onBlur={() => this.handleBlur(task.id)} style={{ width: '95%', border: 'none', outline: 'none' }} />
                   </div>
-              )}
+              )
+              : null
+              }
             </div>
           </div>
           <div  className="doing" style={{  width: '30%'}}>
             <div style={{ backgroundColor: "#fca311" , border: '1px solid grey', borderRadius: '6px', padding: '6px'}}>Doing</div>
             <div   onDrop={e => this.handleDrop(e, "doing")} onDragOver={e => this.handleDragOver(e)}  style={{ backgroundColor: "#fca311" , border: '1px solid silver', borderRadius: '6px',  minHeight:' 100px', padding: '10px' , marginTop: '10px'}}>
-              {doing.map(task => 
+              {doing.length > 0
+              ? doing.map(task => 
                 <div  draggable onDragStart={e => this.handleDragStart(e, task.id, "doing")} style={{ border: '1px solid grey', padding: '5px 0', borderRadius: '4px', margin: '3px 0'}}>
                   {task.task_name}
                 </div>
-              )}
+                ) 
+              : null
+              }
             </div>
           </div>
           <div className="done" style={{  width: '30%'}}>
             <div style={{ backgroundColor: "#e5e5e5" , border: '1px solid grey', borderRadius: '6px', padding: '6px'}}>Done</div>
             <div onDrop={e => this.handleDrop(e, "done")} onDragOver={e => this.handleDragOver(e)} style={{ backgroundColor: "#e5e5e5" , border: '1px solid silver', borderRadius: '6px', minHeight:' 100px', padding: '10px' , marginTop: '10px'}}>
-              {done.map(task => 
+              {done.length > 0
+              ? done.map(task => 
                 <div  draggable onDragStart={e => this.handleDragStart(e, task.id, "done")} style={{ border: '1px solid grey', padding: '5px 0', borderRadius: '4px', margin: '3px 0' }}>
                   {task.task_name}
                 </div>
-              )}
+                )
+              : null
+              }
             </div>
           </div>
         </div>
