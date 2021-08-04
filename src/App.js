@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+import { API_URL } from './apiConfig';
 import './App.css';
 
 class App extends React.Component {
@@ -8,13 +10,62 @@ class App extends React.Component {
       to_do: [],
       doing: [],
       done: [],
-      task: ""
+      task: "",
     }
   }
 
-  addTask(){
-    this.setState({to_do: [...this.state.to_do, { id: this.state.to_do.length + 1, task_name: "" }]})
+  componentDidMount(){
+    this.getTasks()
   }
+
+  async getTasks(){
+    try {
+      const tasks = await axios.get(`${API_URL}/task`)
+      let to_do = []
+      let doing = []
+      let done = []
+      for (let i = 0; i < tasks.length; i++){
+        if (tasks[i].category === "todo"){
+          to_do.push(tasks[i])
+        } else if (tasks[i].category === "doing"){
+          doing.push(tasks[i])
+        } else if (tasks[i].category === "done"){
+          done.push(tasks[i])
+        }
+      }
+      this.setState({
+        to_do: to_do,
+        doing: doing,
+        done: done
+      })
+    } catch (err){
+      console.log(err.message)
+    }
+
+  }
+
+  async addTask(newTask){
+    try {
+      await axios.post(`${API_URL}/task`, newTask)
+      this.getTasks()
+    } catch (err){
+      console.log(err.message)
+    }
+  }
+
+  async updateTask(id, change){
+    try {
+      const res = await axios.patch(`${API_URL}/task/${id}`, change)
+      console.log(res)
+    } catch (err){
+      console.log(err.message)
+    }
+  }
+
+
+  // addTask(){
+  //   this.setState({to_do: [...this.state.to_do, { id: this.state.to_do.length + 1, task_name: "" }]})
+  // }
 
   handleChange(e){
     this.setState({task: e.target.value})
