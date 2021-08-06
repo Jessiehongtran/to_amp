@@ -57,7 +57,8 @@ class App extends React.Component {
 
   async updateTask(id, change){
     try {
-      await axios.patch(`${API_URL}/task/${id}`, change)
+      const res = await axios.patch(`${API_URL}/task/${id}`, change)
+      this.getTasks()
     } catch (err){
       console.log(err.message)
     }
@@ -86,6 +87,7 @@ class App extends React.Component {
   }
 
   handleChangeSelect(id, e){
+    console.log(e.target.value)
     this.updateTask(parseInt(id), {
       team: e.target.value
     })
@@ -167,7 +169,14 @@ class App extends React.Component {
               {doing.length > 0
               ? doing.map(task => 
                 <div  draggable onDragStart={e => this.handleDragStart(e, task.id, "doing")} style={{ textAlign: "left", border: '1px solid grey', padding: '5px 10px', borderRadius: '4px', margin: '3px 0'}}>
-                  {task.task_name}
+                  <p>{task.task_name}</p>
+                  {task.team === "programming"
+                  ? <div style={{ width: '50px', height: '5px', backgroundColor: 'grey', marginTop: '5px', borderRadius: '2px'}}></div>
+                  : task.team === "design"
+                  ? <div style={{ width: '50px', height: '5px', backgroundColor: 'red', marginTop: '5px', borderRadius: '2px'}}></div>
+                  : task.team === "content"
+                  ? <div style={{ width: '50px', height: '5px', backgroundColor: 'blue', marginTop: '5px', borderRadius: '2px'}}></div>
+                  : null}
                 </div>
                 ) 
               : null
@@ -180,7 +189,14 @@ class App extends React.Component {
               {done.length > 0
               ? done.map(task => 
                 <div  draggable onDragStart={e => this.handleDragStart(e, task.id, "done")} style={{ textAlign: "left", border: '1px solid grey', padding: '5px 10px', borderRadius: '4px', margin: '3px 0' }}>
-                  {task.task_name}
+                  <p>{task.task_name}</p>
+                  {task.team === "programming"
+                  ? <div style={{ width: '50px', height: '5px', backgroundColor: 'grey', marginTop: '5px', borderRadius: '2px'}}></div>
+                  : task.team === "design"
+                  ? <div style={{ width: '50px', height: '5px', backgroundColor: 'red', marginTop: '5px', borderRadius: '2px'}}></div>
+                  : task.team === "content"
+                  ? <div style={{ width: '50px', height: '5px', backgroundColor: 'blue', marginTop: '5px', borderRadius: '2px'}}></div>
+                  : null}
                 </div>
                 )
               : null
