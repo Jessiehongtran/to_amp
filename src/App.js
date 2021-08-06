@@ -56,7 +56,7 @@ class App extends React.Component {
 
   async updateTask(id, change){
     try {
-      const res = await axios.patch(`${API_URL}/task/${id}`, change)
+      await axios.patch(`${API_URL}/task/${id}`, change)
     } catch (err){
       console.log(err.message)
     }
