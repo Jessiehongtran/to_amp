@@ -7,7 +7,7 @@ class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      to_do: [],
+      todo: [],
       doing: [],
       done: [],
       task: "",
@@ -22,13 +22,12 @@ class App extends React.Component {
     try {
       const res = await axios.get(`${API_URL}/task`)
       const tasks = res.data
-      console.log('tasks', tasks)
-      let to_do = []
+      let todo = []
       let doing = []
       let done = []
       for (let i = 0; i < tasks.length; i++){
         if (tasks[i].category === "todo"){
-          to_do.push(tasks[i])
+          todo.push(tasks[i])
         } else if (tasks[i].category === "doing"){
           doing.push(tasks[i])
         } else if (tasks[i].category === "done"){
@@ -36,7 +35,7 @@ class App extends React.Component {
         }
       }
       this.setState({
-        to_do: to_do,
+        todo: todo,
         doing: doing,
         done: done
       })
@@ -58,7 +57,6 @@ class App extends React.Component {
   async updateTask(id, change){
     try {
       const res = await axios.patch(`${API_URL}/task/${id}`, change)
-      console.log(res)
     } catch (err){
       console.log(err.message)
     }
@@ -67,12 +65,23 @@ class App extends React.Component {
   createTask(){
     this.setState({
       task: "",
-      to_do: [...this.state.to_do, { task_name: "" }]
+      todo: [...this.state.todo, { task_name: "" }]
     })
   }
 
-  handleChange(e){
-    this.setState({task: e.target.value})
+  handleChange(id, e){
+    if (id){
+      let { todo } = this.state;
+      for (let i = 0; i < todo.length; i++){
+        if (todo[i].id === parseInt(id)){
+          todo[i].task_name = e.target.value
+        }
+      }
+      this.setState({todo: todo})
+    } else {
+      this.setState({task: e.target.value})
+    }
+    
   }
 
   handleBlur(id){
@@ -120,9 +129,8 @@ class App extends React.Component {
   }
 
   render(){
-    let { to_do, doing, done } = this.state
 
-    console.log('to_do', to_do)
+    let { todo, doing, done } = this.state
 
     return (
       <div className="App" style={{ padding: '40px', display: 'flex', justifyContent: 'center'}}>
@@ -130,11 +138,11 @@ class App extends React.Component {
           <div className="todo" style={{  width: '30%', position: 'relative'}}>
             <div style={{ backgroundColor: "#14213d" , color: '#ffffff', border: '1px solid grey', borderRadius: '6px', padding: '6px'}}>Todo</div>
             <button onClick={() => this.createTask()} style={{ position: 'absolute', left: '-15%', marginTop: '10px'}}>+</button>
-            <div style={{ backgroundColor: "#14213d" , color: '#ffffff', border: '1px solid silver', borderRadius: '6px', minHeight:' 100px', padding: '10px', marginTop: '10px'}}>
-              {to_do.length > 0
-              ? to_do.map(task => 
-                  <div draggable onDragStart={e => this.handleDragStart(e, task.id, "to_do")} style={{ backgroundColor: "#ffffff", border: '1px solid grey', padding: '5px 0', borderRadius: '4px', margin: '3px 0'}}>                     
-                      <input onChange={(e) => this.handleChange(e)} value={task.task_name.length > 0 ? task.task_name : this.state.task} onBlur={() => this.handleBlur(task.id)} style={{ width: '95%', border: 'none', outline: 'none' }} />
+            <div onDrop={e => this.handleDrop(e, "todo")} onDragOver={e => this.handleDragOver(e)}   style={{ backgroundColor: "#14213d" , color: '#ffffff', border: '1px solid silver', borderRadius: '6px', minHeight:' 100px', padding: '10px', marginTop: '10px'}}>
+              {todo.length > 0
+              ? todo.map(task => 
+                  <div draggable onDragStart={e => this.handleDragStart(e, task.id, "todo")} style={{ backgroundColor: "#ffffff", border: '1px solid grey', padding: '5px 0', borderRadius: '4px', margin: '3px 0'}}>                     
+                      <input onChange={(e) => this.handleChange(task.id, e)} value={task.task_name.length > 0 ? task.task_name : this.state.task} onBlur={() => this.handleBlur(task.id)} style={{ width: '95%', border: 'none', outline: 'none' }} />
                   </div>
               )
               : null
@@ -143,7 +151,7 @@ class App extends React.Component {
           </div>
           <div  className="doing" style={{  width: '30%'}}>
             <div style={{ backgroundColor: "#fca311" , border: '1px solid grey', borderRadius: '6px', padding: '6px'}}>Doing</div>
-            <div   onDrop={e => this.handleDrop(e, "doing")} onDragOver={e => this.handleDragOver(e)}  style={{ backgroundColor: "#fca311" , border: '1px solid silver', borderRadius: '6px',  minHeight:' 100px', padding: '10px' , marginTop: '10px'}}>
+            <div onDrop={e => this.handleDrop(e, "doing")} onDragOver={e => this.handleDragOver(e)}  style={{ backgroundColor: "#fca311" , border: '1px solid silver', borderRadius: '6px',  minHeight:' 100px', padding: '10px' , marginTop: '10px'}}>
               {doing.length > 0
               ? doing.map(task => 
                 <div  draggable onDragStart={e => this.handleDragStart(e, task.id, "doing")} style={{ border: '1px solid grey', padding: '5px 0', borderRadius: '4px', margin: '3px 0'}}>
